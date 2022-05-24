@@ -1,1 +1,1 @@
-web: gunicorn faceRrecog.wsgi --log-file -
+web: gunicorn faceRrecog.wsgi
