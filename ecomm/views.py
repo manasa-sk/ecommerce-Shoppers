@@ -3,10 +3,16 @@ from django.shortcuts import redirect, render
 from numpy import product
 from .models import *
 
+
 # Create your views here.
 class Page:    
     def home(request):
-        return render(request, 'index.html', {'cart_num': getCartNum()})
+        try:
+            if getActiveUser():
+                return render(request, 'index.html', {'cart_num': getCartNum()})
+        except User.DoesNotExist:
+            msg = 'Login to access the store.'
+            return render(request, 'login.html', {'msg': msg})
 
     def shop(request):
         prod = Product.objects.all()
@@ -30,14 +36,23 @@ class Page:
         return render(request, 'product.html', {'cart_num': getCartNum(), 'product': product, 'prodimg': prodimg})
     
     def loginPage(request):
+        try:
+            if getActiveUser():
+                userP = getActiveUser()
+                userP.log_status = 0
+                userP.save()
+        except:
+            pass
         return render(request, 'login.html', {'msg': ''})
     
     def registerPage(request):
         return render(request, 'register.html', {'msg': ''})
 
     def thankyou(request):
-        place_order()
-        return render(request, 'thankyou.html', {'cart_num': getCartNum()})
+        if place_order():
+            return render(request, 'thankyou.html', {'cart_num': getCartNum()})
+        else:
+            return HttpResponseRedirect('/cart/')
     
     def showOrder(request):
         if request.method=='GET':
@@ -112,18 +127,23 @@ def loginUser(request):
             return render(request, 'login.html', {'msg': msg})
 
 def place_order():
-    user = getActiveUser()
-    order = Order(user_id=user)
-    order.save()
-
     cart, total, num = getCart()
     for item in cart:
-        orderP = OrderProd(order_id=order, product_id=getProduct(item[0].product_id), quantity=item[1].quantity)
-        orderP.save()
+        product = getProduct(item[0].product_id)
+        quantity = item[1].quantity
+        if product.stock >= quantity:
+            user = getActiveUser()
+            order = Order(user_id=user)
+            order.save()
+
+            orderP = OrderProd(order_id=order, product_id=product, quantity=quantity)
+            orderP.save()
+            product.stock-=quantity
+            product.save()
     
-    Cart.objects.filter(user_id=user).delete()
-    user.cart_num = 0
-    user.save()
+            Cart.objects.get(user_id=user, product_id=product).delete()
+            user.cart_num = 0
+            user.save()
     return True
 
 def registerUser(request):
@@ -158,21 +178,25 @@ def addToCart(request):
         product = getProduct(pid=int(request.GET.get('pid')))
         user = getActiveUser()
 
-        try:
-            cart = Cart.objects.get(user_id=user, product_id=product)
-            cart.quantity+=quantity
-            cart.save()
-        except:
-            cart = Cart(user_id=user, product_id=product, quantity=quantity)
-            cart.save()
+        if quantity<=product.stock:
+            msg = ''
+            try:
+                cart = Cart.objects.get(user_id=user, product_id=product)
+                cart.quantity+=quantity
+                cart.save()
+            except:
+                cart = Cart(user_id=user, product_id=product, quantity=quantity)
+                cart.save()
 
-        user.cart_num+=quantity
-        user.save()
-        
+            user.cart_num+=quantity
+            user.save()
+        else:
+            msg = 'Please enter quantity within stock limit.'
+
         pid = request.GET.get('pid')
         product = Product.objects.get(product_id=pid)
         prodimg = ProdImage.objects.get(id=product)
-        return render(request, 'product.html', {'cart_num': getCartNum(), 'product': product, 'prodimg': prodimg})
+        return render(request, 'product.html', {'cart_num': getCartNum(), 'product': product, 'prodimg': prodimg, 'msg': msg})
 
 def cart(request):
     cart, total, num = getCart()

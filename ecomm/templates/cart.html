@@ -6,7 +6,6 @@
     color: white;
   }
   .empty {
-    height: 0.2px;
     background-color: gray;
     border: gray;
   }
@@ -35,21 +34,14 @@
                     <th class="product-price">Price</th>
                     <th class="product-quantity">Quantity</th>
                     <th class="product-total">Total</th>
-                    <th class="product-remove">Remove</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="empty" style="width: 1px;">
-                    <td class="empty"></td>
-                    <td class="empty"></td>
-                    <td class="empty"></td>
-                    <td class="empty"></td>
-                    <td class="empty">
+                    <th class="product-remove">Remove
                       <form action="/remove/" method="get">
                         {% csrf_token %}
                       </form>
-                    </td>
+                    </th>
                   </tr>
+                </thead>
+                <tbody>
                   {% for product, cartObj, itemPrice in cart %}
 
                     <tr>

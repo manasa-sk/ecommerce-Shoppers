@@ -19,6 +19,7 @@ class Product(models.Model):
     product_id= models.IntegerField(primary_key=True, auto_created=True, serialize=True)
     product_name = models.CharField(max_length=30)
     price = models.PositiveIntegerField()
+    stock = models.PositiveIntegerField(default=100)
 
 class ProdImage(models.Model):
     id = models.OneToOneField('Product', on_delete=models.CASCADE, primary_key=True)
@@ -44,3 +45,14 @@ class OrderProd(models.Model):
 
     class Meta:
         unique_together = (('order_id', 'product_id'),)
+
+class Category(models.Model):
+    cat_id = models.AutoField(auto_created=True, serialize=True, primary_key=True)
+    cat_name = models.CharField(max_length=50)
+
+class ProdCat(models.Model):
+    cat_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('cat_id', 'product_id'),)

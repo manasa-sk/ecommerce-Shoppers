@@ -20,7 +20,11 @@
               <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th class="product-name">Product</th>
+                    <th class="product-name">Product
+                      <form action="/product/" method="get">
+                        {% csrf_token %}
+                      </form>
+                    </th>
                     <th class="product-price">Price</th>
                     <th class="product-quantity">Quantity</th>
                   </tr>
@@ -29,7 +33,11 @@
                   {% for item, quantity in orderDet %}
                     <tr>
                       <td class="product-name">
-                        <h2 class="h5 text-black">{{item.product_name}}</h2>
+                        <form action="/product/" method="get">
+                          {% csrf_token %}
+                          <input type="hidden" name="pid" value="{{item.product_id}}">
+                          <button type="submit" style="border: none; background-color: white; cursor: pointer;"><h2 class="h5 text-black">{{item.product_name}}</h2></button>
+                        </form>
                       </td>
                       <td>${{item.price}}</td>
                       <td>{{quantity}}</td>
