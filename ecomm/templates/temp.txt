@@ -1,0 +1,17 @@
+## TEMPORARY TEXT ##
+
+
+<div class="site-section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-12">
+            <div class="border p-4 rounded" role="alert">
+              Returning customer? <a href="{% url 'login' %}">Click here</a> to login
+              <br>
+              First order? <a href="{% url 'register' %}">Click here</a> to register
+            </div>
+          </div>
+        </div>
+
+
+<button type="submit" style="border: none; background-color: white; color: #7971ea; cursor: pointer;">Remove</button>

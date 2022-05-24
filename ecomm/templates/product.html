@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Product{% endblock %}
+
+{% block body %}
+
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="{% url 'home' %}">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">{{product.product_name}}</strong></div>
+        </div>
+      </div>
+    </div>  
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <img src="{{prodimg.image.url}}" alt="Image" class="img-fluid">
+          </div>
+          <div class="col-md-6">
+            <h2 class="text-black">{{product.product_name}}</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, vitae, explicabo? Incidunt facere, natus soluta dolores iusto! Molestiae expedita veritatis nesciunt doloremque sint asperiores fuga voluptas, distinctio, aperiam, ratione dolore.</p>
+            <p class="mb-4">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
+            <p><strong class="text-primary h4">${{product.price}}</strong></p>
+            <div class="mb-1 d-flex">
+              
+            
+            <div>
+              <form action="/addToCart/" method="get">
+                <div class="mb-5">
+                  <div class="input-group mb-3" style="max-width: 120px;">
+                  <input type="number" name="quantity" id="quantity" class="form-control text-center" placeholder="Quantity" required>
+                  </div>
+                <input type="hidden" name="pid" id="pid" value="{{product.product_id}}">
+                <button type="submit" style="border: none; border-radius: 10px; height: 2rem; width: 7rem; text-align: center; background-color: #7971ea; color: white; cursor: pointer;"><p>Add To Cart</p></button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+
+  {% endblock %}

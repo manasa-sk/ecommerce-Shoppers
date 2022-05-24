@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Account{% endblock %}
+{% block style %}
+<style>
+    .order {
+        border: none;
+        background-color: white;
+        cursor: pointer;
+    }
+    .order-oid {
+        border: none;
+        cursor: pointer;
+        color: #7971ea;
+    }
+</style>
+{% endblock %}
+{% block body %}
+{% load static %}
+
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="{% url 'home' %}">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Account</strong></div>
+        </div>
+      </div>
+    </div>
+        
+        <div class="col-md-12">
+            <h2 class="h3 mb-3 text-black">Account</h2>
+            <div class="p-3 p-lg-5 border">
+                <table class="table site-block-order-table mb-5">
+                  <tbody>
+                    <tr>
+                      <td><strong class="mx-2">Name</strong></td>
+                      <td>{{user.first_name}} {{user.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong class="mx-2">Phone Number</strong></td>
+                        <td>{{user.phone_num}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong class="mx-2">Email</strong></td>
+                        <td>{{userEm.email}}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{% url 'logout' %}">Log Out</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+
+              </div>
+        </div>
+
+
+          <div class="col-md-6">
+            
+            <div class="row mb-5">
+              <div class="col-md-12">
+                <h2 class="h3 mb-3 text-black">Your Orders</h2>
+                <div class="p-3 p-lg-5 border">
+                  <table class="table site-block-order-table mb-5">
+                    <thead>
+                      <th>Order ID</th>
+                      <th>Date Placed</th>
+                    </thead>
+                    <tbody>
+                      {% for order in orders %}
+                      <tr>
+                        <td>
+                            <form action="/order/" method="get">
+                                <button type="submit" class="order"><input type="text" name="oid" class="order-oid" value="{{order.order_id}}" readonly></button>
+                            </form>
+                        </td>
+                        <td>{{order.datetime_placed}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endblock %}

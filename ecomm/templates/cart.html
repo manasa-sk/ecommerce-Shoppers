@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Cart{% endblock %}
+{% block style %}
+<style>
+  #continue:hover {
+    color: white;
+  }
+  .empty {
+    height: 0.2px;
+    background-color: gray;
+    border: gray;
+  }
+</style>
+{% endblock %}
+{% block body %}
+{% load static %}
+
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="{% url 'home' %}">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Cart</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row mb-5">
+          <form class="col-md-12" method="post">
+            <div class="site-blocks-table">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th class="product-name">Product</th>
+                    <th class="product-price">Price</th>
+                    <th class="product-quantity">Quantity</th>
+                    <th class="product-total">Total</th>
+                    <th class="product-remove">Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="empty" style="width: 1px;">
+                    <td class="empty"></td>
+                    <td class="empty"></td>
+                    <td class="empty"></td>
+                    <td class="empty"></td>
+                    <td class="empty">
+                      <form action="/remove/" method="get">
+                        {% csrf_token %}
+                      </form>
+                    </td>
+                  </tr>
+                  {% for product, cartObj, itemPrice in cart %}
+
+                    <tr>
+                      <td class="product-name">
+                        <h2 class="h5 text-black">{{product.product_name}}</h2>
+                      </td>
+                      <td>${{product.price}}</td>
+                      <td>{{cartObj.quantity}}</td>
+                      <td>${{itemPrice}}</td>
+                      <td>
+                        <form action="/remove/" method="GET">
+                          {% csrf_token %}
+                        <input type="hidden" name="pid" id="pid" value="{{product.product_id}}">
+                        <button type="submit" style="border: none; background-color: white; color: #7971ea; cursor: pointer;">Remove</button></td>
+                      </form>
+                      </tr>
+                  
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row mb-5">
+              <div class="col-md-6">
+                <button class="btn btn-outline-primary btn-sm btn-block"><a href="{% url 'shop' %}" id="continue">Continue Shopping</a></button>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col-md-6 pl-5">
+            <div class="row justify-content-end">
+              <div class="col-md-7">
+                <div class="row">
+                  <div class="col-md-12 text-right border-bottom mb-5">
+                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <span class="text-black">Subtotal</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black">${{total}}</strong>
+                  </div>
+                </div>
+                <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Total</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black">${{total}}</strong>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <a href="{% url 'checkout' %}"><button class="btn btn-primary btn-lg py-3 btn-block">Proceed To Checkout</button></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
