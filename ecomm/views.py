@@ -156,20 +156,28 @@ def registerUser(request):
             msg = "User already registered, Log in"
             return render(request, 'register.html', {'msg': msg, 'cart_num': getCartNum()})
         except UserEmail.DoesNotExist:
-            user = User(first_name=form.get('c_diff_fname'), last_name=form.get('c_diff_lname'), phone_num=form.get('phone'), password=form.get('pass'))
-            user_em = UserEmail(email=form.get('email'))
-            try:
-                if getActiveUser():
-                    userP = getActiveUser()
-                    userP.log_status = 0
-                    userP.save()
-            except:
-                pass
-            user.log_status = 1
-            user.save()
-            user_em.user_id = user
-            user_em.save()
-            return HttpResponseRedirect('/home/')
+            if form.get('cpass')==form.get('pass') and len(form.get('pass'))>=6:
+                user = User(first_name=form.get('c_diff_fname'), last_name=form.get('c_diff_lname'), phone_num=form.get('phone'), password=form.get('pass'))
+                user_em = UserEmail(email=form.get('email'))
+                try:
+                    if getActiveUser():
+                        userP = getActiveUser()
+                        userP.log_status = 0
+                        userP.save()
+                except:
+                    pass
+            elif len(form.get('pass'))<6:
+                msg = "Password must be of at least 6 characters"
+                return render(request, 'register.html', {'msg': msg, 'cart_num': getCartNum()})
+            else:
+                msg = "Password does not match"
+                return render(request, 'register.html', {'msg': msg, 'cart_num': getCartNum()})
+
+        user.log_status = 1
+        user.save()
+        user_em.user_id = user
+        user_em.save()
+        return HttpResponseRedirect('/home/')
 
 def addToCart(request):
     if request.method=='GET':
