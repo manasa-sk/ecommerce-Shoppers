@@ -1,15 +1,50 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
 
 # Create your models here.
-class User(models.Model):
+class User(AbstractBaseUser):
     user_id = models.AutoField(auto_created=True, primary_key=True, unique=True, serialize=True)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     phone_num = models.PositiveBigIntegerField(null=False, default=0)
     address = models.TextField(null=False, default="-")
-    password = models.CharField(editable=False, max_length=20)
+    last_login = models.DateTimeField(auto_now=True)
     cart_num = models.PositiveSmallIntegerField(null=False, default=0)
     log_status = models.PositiveSmallIntegerField(null=False, default=0)
+    # password is default
+
+    is_active = models.BooleanField(default=True)
+    staff = models.BooleanField(default=False)
+    admin = models.BooleanField(default=False)
+
+
+    USERNAME_FIELD = 'user_id'
+    REQUIRED_FIELDS = ['email'] # username & password are required by default.
+
+    def __str__(self):
+        return self.user_id
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    @property
+    def is_staff(self):
+        "Is the user a member of staff?"
+        return self.staff
+
+    @property
+    def is_admin(self):
+        "Is the user a admin member?"
+        return self.admin
+
+
 
 class UserEmail(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

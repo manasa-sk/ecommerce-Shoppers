@@ -5,7 +5,7 @@ from .models import *
 
 
 # Create your views here.
-class Page:    
+class Page:
     def home(request):
         try:
             if getActiveUser():
@@ -115,7 +115,7 @@ def loginUser(request):
             pass
         try:
             user_em = UserEmail.objects.get(email=email)
-            if user_em.user_id.password == pwd:
+            if user_em.user_id.check_password(repr(pwd)):
                 user_em.user_id.log_status = 1
                 user_em.user_id.save()
                 return HttpResponseRedirect('/home/')
@@ -157,7 +157,8 @@ def registerUser(request):
             return render(request, 'register.html', {'msg': msg, 'cart_num': getCartNum()})
         except UserEmail.DoesNotExist:
             if form.get('cpass')==form.get('pass') and len(form.get('pass'))>=6:
-                user = User(first_name=form.get('c_diff_fname'), last_name=form.get('c_diff_lname'), phone_num=form.get('phone'), password=form.get('pass'))
+                user = User(first_name=form.get('c_diff_fname'), last_name=form.get('c_diff_lname'), phone_num=form.get('phone'))
+                user.set_password(repr(form.get('pass')))
                 user_em = UserEmail(email=form.get('email'))
                 try:
                     if getActiveUser():
